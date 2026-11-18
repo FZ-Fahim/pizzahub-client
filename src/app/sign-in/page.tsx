@@ -83,8 +83,10 @@ export default function SignInPage() {
             </div>
           )}
 
+
           {/* Quick Demo Credentials Helper */}
-          <div className="rounded-lg border border-pizza-crust/30 bg-pizza-amber/10 p-3 text-xs">
+
+          {/* <div className="rounded-lg border border-pizza-crust/30 bg-pizza-amber/10 p-3 text-xs">
             <div className="flex items-center gap-1.5 font-semibold text-pizza-crust mb-2">
               <Sparkles className="h-3.5 w-3.5" />
               <span>Quick Demo Accounts Autofill:</span>
@@ -112,7 +114,8 @@ export default function SignInPage() {
                 Customer
               </button>
             </div>
-          </div>
+          </div> */}
+          
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">

@@ -164,11 +164,6 @@ export default function CustomerDashboardPage() {
         if (ord && ord._id) idMap.set(ord._id, ord);
       });
 
-      // If user has no orders at all, use realistic demo orders so dashboard looks rich
-      if (idMap.size === 0) {
-        DEMO_ORDERS.forEach((ord) => idMap.set(ord._id, ord));
-      }
-
       const merged = Array.from(idMap.values()).sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );

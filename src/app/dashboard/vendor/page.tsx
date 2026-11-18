@@ -120,47 +120,49 @@ export default function VendorDashboardPage() {
     else setLoading(true);
 
     try {
-      // 1. Fetch vendor items
+      // 1. Fetch vendor items directly from database
       let loadedItems: MenuItem[] = [];
       try {
         const itemRes = await menuApi.getVendorItems();
         if (itemRes && itemRes.data && Array.isArray(itemRes.data)) {
           loadedItems = itemRes.data;
+          // Clear any stale legacy mock items from browser localStorage
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('pizzahub_vendor_items');
+          }
         }
       } catch (e) {
-        // Fallback
-      }
-
-      // Merge local newly added items from session storage if any
-      if (typeof window !== 'undefined') {
-        try {
-          const rawLocal = localStorage.getItem('pizzahub_vendor_items');
-          if (rawLocal) {
-            const localList: MenuItem[] = JSON.parse(rawLocal);
-            const idMap = new Map<string, MenuItem>();
-            [...localList, ...loadedItems].forEach((it) => idMap.set(it._id, it));
-            loadedItems = Array.from(idMap.values());
+        // Only if backend is completely unreachable
+        if (typeof window !== 'undefined') {
+          try {
+            const rawLocal = localStorage.getItem('pizzahub_vendor_items');
+            if (rawLocal) {
+              const localList: MenuItem[] = JSON.parse(rawLocal);
+              loadedItems = localList.filter((it) => !it._id.startsWith('m_vendor_'));
+            }
+          } catch {
+            // ignore
           }
-        } catch {
-          // ignore
         }
-      }
-
-      if (loadedItems.length === 0) {
-        loadedItems = DEMO_VENDOR_ITEMS;
       }
 
       setItems(loadedItems);
 
-      // 2. Fetch vendor orders
+      // 2. Fetch vendor orders directly from database
+      let loadedOrders: Order[] = [];
       try {
         const orderRes = await orderApi.getVendorOrders();
         if (orderRes && orderRes.data && Array.isArray(orderRes.data)) {
-          setOrders(orderRes.data);
+          loadedOrders = orderRes.data;
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('pizzahub_vendor_orders');
+          }
         }
       } catch (e) {
         // offline orders fallback
       }
+
+      setOrders(loadedOrders);
     } finally {
       setLoading(false);
       setRefreshing(false);

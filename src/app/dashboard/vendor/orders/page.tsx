@@ -178,10 +178,6 @@ export default function VendorOrdersPage() {
         }
       }
 
-      if (loadedOrders.length === 0) {
-        loadedOrders = DEMO_VENDOR_ORDERS;
-      }
-
       // Sort newest first
       loadedOrders.sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()

@@ -56,6 +56,7 @@ const config: Config = {
           darkRed: '#BE123C',   // Simmered Marinara
           crust: '#D97706',     // Wood-fired Golden Crust
           amber: '#F59E0B',     // Melted Cheddar & Mozzarella
+          orange: '#F97316',    // Stone-Oven Flame Orange
           cheese: '#FEF3C7',    // Creamy Ricotta
           basil: '#16A34A',     // Fresh Sweet Basil
           darkBasil: '#15803D', // Rosemary & Oregano

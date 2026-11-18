@@ -90,9 +90,9 @@ export function VendorSidebar() {
               <Link href="/dashboard/vendor/subscription" className="block">
                 <Button
                   size="sm"
-                  className="w-full h-7 text-[11px] font-semibold bg-gradient-to-r from-pizza-orange to-pizza-red text-white rounded-lg shadow-xs hover:opacity-95"
+                  className="w-full h-8 text-xs font-bold bg-pizza-red hover:bg-pizza-darkRed text-white rounded-lg shadow-sm transition-all active:scale-95"
                 >
-                  <Sparkles className="w-3 h-3 mr-1" /> Upgrade $99/yr
+                  <Sparkles className="w-3.5 h-3.5 mr-1 text-amber-300" /> Upgrade $99/yr
                 </Button>
               </Link>
             </div>

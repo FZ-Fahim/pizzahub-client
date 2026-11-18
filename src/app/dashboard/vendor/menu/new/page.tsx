@@ -94,12 +94,14 @@ export default function NewMenuItemPage() {
             count = res.data.filter((item) => item.status !== 'inactive').length;
           }
         } catch {
-          // Check local storage fallback
+          // Check local storage only if offline
           if (typeof window !== 'undefined') {
             const raw = localStorage.getItem('pizzahub_vendor_items');
             if (raw) {
               const list: MenuItem[] = JSON.parse(raw);
-              count = list.filter((item) => item.status !== 'inactive').length;
+              count = list.filter(
+                (item) => item.status !== 'inactive' && !item._id.startsWith('m_vendor_')
+              ).length;
             }
           }
         }

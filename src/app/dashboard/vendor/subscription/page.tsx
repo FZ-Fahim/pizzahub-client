@@ -271,7 +271,7 @@ export default function VendorSubscriptionPage() {
             <Button
               onClick={handleUpgrade}
               disabled={loading || isPremium}
-              className="w-full h-12 rounded-xl text-xs font-bold bg-gradient-to-r from-pizza-orange to-pizza-red hover:opacity-95 text-white shadow-lg shadow-pizza-red/20 gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full h-12 rounded-xl text-xs font-bold bg-pizza-red hover:bg-pizza-darkRed text-white shadow-lg shadow-pizza-red/30 gap-2 cursor-pointer disabled:opacity-50 transition-all active:scale-98"
             >
               {loading ? (
                 <>
