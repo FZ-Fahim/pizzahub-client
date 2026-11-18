@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { OrderModal } from '@/components/orders/order-modal';
 import {
   Pizza,
   MapPin,
@@ -183,6 +184,7 @@ export default function MenuItemDetailsPage({ params }: PageProps) {
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const [orderModalNotice, setOrderModalNotice] = useState<string | null>(null);
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     async function loadItem() {
@@ -253,10 +255,8 @@ export default function MenuItemDetailsPage({ params }: PageProps) {
       return;
     }
 
-    // Customer is authenticated: ready for Phase C15 Order Modal
-    setOrderModalNotice(
-      `Order ready! Ordering ${quantity}x "${item?.itemName}". Order submission modal will connect in Phase C15.`
-    );
+    // Customer is authenticated: open order modal
+    setIsOrderModalOpen(true);
   };
 
   const handleShare = () => {
@@ -689,6 +689,14 @@ export default function MenuItemDetailsPage({ params }: PageProps) {
               ))}
           </div>
         </div>
+
+        {/* Customer Order Modal */}
+        <OrderModal
+          item={item}
+          isOpen={isOrderModalOpen}
+          onClose={() => setIsOrderModalOpen(false)}
+          quantity={quantity}
+        />
       </div>
     </div>
   );
