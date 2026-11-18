@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { AuthProvider } from '@/context/auth-context';
 
 export const metadata: Metadata = {
   title: 'PizzaHub — Artisanal Multi-Vendor Pizza Marketplace',
@@ -16,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen bg-background font-sans text-foreground antialiased selection:bg-pizza-red selection:text-white">
-        <div className="relative flex min-h-screen flex-col">{children}</div>
+        <AuthProvider>
+          <div className="relative flex min-h-screen flex-col">{children}</div>
+        </AuthProvider>
       </body>
     </html>
   );
