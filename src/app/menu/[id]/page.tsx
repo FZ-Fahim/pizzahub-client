@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/auth-context';
+import { useFavorites } from '@/context/favorites-context';
 import { menuApi } from '@/lib/api';
 import { MenuItem, User } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { OrderModal } from '@/components/orders/order-modal';
+import { ItemReviews } from '@/components/reviews/item-reviews';
 import {
   Pizza,
   MapPin,
@@ -182,7 +184,8 @@ export default function MenuItemDetailsPage({ params }: PageProps) {
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
   const [isCopied, setIsCopied] = useState<boolean>(false);
-  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const isLiked = item ? isFavorite(item._id) : false;
   const [orderModalNotice, setOrderModalNotice] = useState<string | null>(null);
   const [isOrderModalOpen, setIsOrderModalOpen] = useState<boolean>(false);
 
@@ -407,7 +410,7 @@ export default function MenuItemDetailsPage({ params }: PageProps) {
                   <Share2 className="w-4 h-4" />
                 </button>
                 <button
-                  onClick={() => setIsLiked(!isLiked)}
+                  onClick={() => item && toggleFavorite(item)}
                   aria-label="Save to favorites"
                   className={`w-9 h-9 rounded-full bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md flex items-center justify-center transition-all shadow-md active:scale-95 ${
                     isLiked
@@ -633,6 +636,9 @@ export default function MenuItemDetailsPage({ params }: PageProps) {
             </div>
           </div>
         </div>
+
+        {/* Artisanal Tasting Reviews & Rating Submissions */}
+        <ItemReviews itemId={item._id} itemName={item.itemName} />
 
         {/* Bottom Recommendation: More from Artisanal Kitchens */}
         <div className="pt-12 border-t border-zinc-200 dark:border-zinc-800 space-y-6">

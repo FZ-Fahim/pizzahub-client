@@ -32,13 +32,16 @@ import {
   ShieldCheck,
   PlusCircle,
   CreditCard,
+  Heart,
 } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { useFavorites } from '@/context/favorites-context';
 
 export function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isAuthenticated, logout } = useAuth();
+  const { favoritesCount } = useFavorites();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
@@ -118,6 +121,19 @@ export function Navbar() {
 
         {/* Right Action Section (Desktop) */}
         <div className="hidden md:flex items-center gap-3">
+          <Link
+            href="/favorites"
+            className="relative p-2 rounded-xl text-zinc-600 dark:text-zinc-300 hover:text-pizza-red hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            title="My Saved Pizzas"
+          >
+            <Heart className="w-4 h-4" />
+            {favoritesCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 rounded-full bg-pizza-red text-white text-[10px] font-bold flex items-center justify-center shadow-xs">
+                {favoritesCount}
+              </span>
+            )}
+          </Link>
+
           <ThemeToggle />
 
           {isAuthenticated && user ? (
@@ -265,6 +281,22 @@ export function Navbar() {
                       {link.label}
                     </Link>
                   ))}
+
+                  <Link
+                    href="/favorites"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-between rounded-lg px-3 py-2 text-base font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Heart className="w-4 h-4 text-pizza-red" />
+                      <span>Saved Pizzas</span>
+                    </span>
+                    {favoritesCount > 0 && (
+                      <Badge className="bg-pizza-red text-white text-[10px] px-1.5 py-0 border-0">
+                        {favoritesCount}
+                      </Badge>
+                    )}
+                  </Link>
 
                   {isAuthenticated && (
                     <Link

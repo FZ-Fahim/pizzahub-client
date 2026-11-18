@@ -7,6 +7,7 @@ import {
   Transaction,
   User,
   AdminOverviewStats,
+  Review,
 } from '@/types';
 
 const API_BASE_URL =
@@ -217,6 +218,20 @@ export const adminApi = {
       '/admin/transactions',
       { params }
     );
+    return res.data;
+  },
+};
+
+export const reviewApi = {
+  getItemReviews: async (itemId: string) => {
+    const res = await apiClient.get<ApiResponse<Review[]> & { averageRating: number }>(
+      `/reviews/item/${itemId}`
+    );
+    return res.data;
+  },
+
+  createReview: async (data: { itemId: string; rating: number; comment: string }) => {
+    const res = await apiClient.post<ApiResponse<Review>>('/reviews', data);
     return res.data;
   },
 };

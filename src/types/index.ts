@@ -67,6 +67,16 @@ export interface Transaction {
   createdAt: string;
 }
 
+export interface Review {
+  _id: string;
+  itemId: string | MenuItem;
+  customerId: string | User;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
 export interface ApiResponse<T = any> {
   success: boolean;
   message?: string;
