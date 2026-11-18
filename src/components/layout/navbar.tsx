@@ -33,6 +33,7 @@ import {
   PlusCircle,
   CreditCard,
 } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export function Navbar() {
   const pathname = usePathname();
@@ -117,6 +118,8 @@ export function Navbar() {
 
         {/* Right Action Section (Desktop) */}
         <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
+
           {isAuthenticated && user ? (
             <div className="flex items-center gap-3">
               {/* Premium Badge for vendors */}
@@ -210,7 +213,8 @@ export function Navbar() {
         </div>
 
         {/* Mobile Navigation Trigger */}
-        <div className="flex items-center md:hidden">
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="Open mobile menu">

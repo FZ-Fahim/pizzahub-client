@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/context/auth-context';
 import { Navbar } from '@/components/layout/navbar';
+import { Footer } from '@/components/layout/footer';
 
 export const metadata: Metadata = {
   title: 'PizzaHub — Artisanal Multi-Vendor Pizza Marketplace',
@@ -22,6 +23,7 @@ export default function RootLayout({
           <div className="relative flex min-h-screen flex-col">
             <Navbar />
             <div className="flex-1">{children}</div>
+            <Footer />
           </div>
         </AuthProvider>
       </body>
