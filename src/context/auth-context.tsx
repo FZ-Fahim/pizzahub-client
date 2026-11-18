@@ -117,9 +117,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const loginWithGoogle = async (): Promise<void> => {
-    const serverUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'https://pizzahub-server-one.vercel.app';
-    const callbackUrl = encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : ''}`);
-    window.location.href = `${serverUrl}/api/auth/sign-in/social?provider=google&callbackURL=${callbackUrl}`;
+    try {
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: `${window.location.origin}/dashboard`,
+      });
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+    }
   };
 
   const register = async (

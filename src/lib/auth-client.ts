@@ -1,10 +1,10 @@
 import { createAuthClient } from 'better-auth/react';
 
-const baseURL =
-  process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:5000';
-
 export const authClient = createAuthClient({
-  baseURL,
+  baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'https://pizzahub-server-one.vercel.app',
+  fetchOptions: {
+    credentials: 'include',
+  },
 });
 
 export const {

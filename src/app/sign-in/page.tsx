@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/auth-context';
+import { authClient } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -48,12 +49,15 @@ export default function SignInPage() {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    const serverUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "https://pizzahub-server-one.vercel.app";
-    const callbackUrl = encodeURIComponent(`${window.location.origin}`);
-    
-    // Direct top-level navigation ensures cookies are stored as 1st-party cookies
-    window.location.href = `${serverUrl}/api/auth/sign-in/social?provider=google&callbackURL=${callbackUrl}`;
+  const handleGoogleSignIn = async () => {
+    try {
+      await authClient.signIn.social({
+        provider: 'google',
+        callbackURL: `${window.location.origin}/dashboard`,
+      });
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+    }
   };
 
   const fillDemoAccount = (demoEmail: string, demoPass: string) => {
