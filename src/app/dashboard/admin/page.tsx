@@ -60,14 +60,14 @@ import {
 
 // Fallback demo data for fresh databases or offline testing
 const DEMO_OVERVIEW: AdminOverviewStats & { totalRevenue: number } = {
-  totalUsers: 18,
-  totalCustomers: 12,
-  totalVendors: 5,
-  totalMenuItems: 15,
-  pendingMenuItems: 3,
-  approvedMenuItems: 11,
-  totalOrders: 42,
-  totalRevenue: 495.0,
+  totalUsers: 0,
+  totalCustomers: 0,
+  totalVendors: 0,
+  totalMenuItems: 0,
+  pendingMenuItems: 0,
+  approvedMenuItems: 0,
+  totalOrders: 0,
+  totalRevenue: 0,
 };
 
 const CHART_DATA = [
@@ -274,9 +274,15 @@ export default function AdminDashboardPage() {
 
       // 3. Fetch Menu Items
       try {
-        const menuRes = await adminApi.getMenuItems();
+        const menuRes = await adminApi.getMenuItems({ limit: 100 });
         if (menuRes?.data && Array.isArray(menuRes.data)) {
           setMenuItems(menuRes.data);
+          setStats((prev) => ({
+            ...prev,
+            totalMenuItems: menuRes.data.length,
+            pendingMenuItems: menuRes.data.filter((i: any) => i.status === 'pending').length,
+            approvedMenuItems: menuRes.data.filter((i: any) => i.status === 'approved').length,
+          }));
         }
       } catch {}
 
@@ -344,9 +350,22 @@ export default function AdminDashboardPage() {
         await adminApi.updateMenuItemStatus(itemId, newStatus);
       }
 
-      setMenuItems((prev) =>
-        prev.map((item) => (item._id === itemId ? { ...item, status: newStatus } : item))
+      const updated = menuItems.map((item) =>
+        item._id === itemId ? { ...item, status: newStatus } : item
       );
+      setMenuItems(updated);
+
+      // Immediately synchronize overview stats so counters reflect approval instantly
+      setStats((prev) => ({
+        ...prev,
+        pendingMenuItems: updated.filter((i) => i.status === 'pending').length,
+        approvedMenuItems: updated.filter((i) => i.status === 'approved').length,
+      }));
+
+      // Background sync with database counters
+      adminApi.getOverview().then((res) => {
+        if (res?.data) setStats(res.data as any);
+      }).catch(() => {});
 
       setBannerNotice(`Recipe status updated to '${newStatus}'.`);
     } catch (err: any) {
@@ -367,7 +386,22 @@ export default function AdminDashboardPage() {
         await adminApi.deleteMenuItem(itemId);
       }
 
-      setMenuItems((prev) => prev.filter((item) => item._id !== itemId));
+      const updated = menuItems.filter((item) => item._id !== itemId);
+      setMenuItems(updated);
+
+      // Immediately synchronize overview stats
+      setStats((prev) => ({
+        ...prev,
+        totalMenuItems: updated.length,
+        pendingMenuItems: updated.filter((i) => i.status === 'pending').length,
+        approvedMenuItems: updated.filter((i) => i.status === 'approved').length,
+      }));
+
+      // Background sync with database counters
+      adminApi.getOverview().then((res) => {
+        if (res?.data) setStats(res.data as any);
+      }).catch(() => {});
+
       setBannerNotice('Recipe permanently deleted from platform.');
     } catch (err: any) {
       setBannerNotice(err.message || 'Failed to delete menu item.');
@@ -398,6 +432,18 @@ export default function AdminDashboardPage() {
         m.status.toLowerCase().includes(q)
     );
   }, [menuItems, menuSearch]);
+
+  // Dynamically synchronized metric counts from real loaded menu items
+  const catalogCount = useMemo(() => {
+    return menuItems.length > 0 ? menuItems.length : stats.totalMenuItems;
+  }, [menuItems, stats.totalMenuItems]);
+
+  const pendingCount = useMemo(() => {
+    if (menuItems.length > 0) {
+      return menuItems.filter((i) => i.status === 'pending').length;
+    }
+    return stats.pendingMenuItems;
+  }, [menuItems, stats.pendingMenuItems]);
 
   return (
     <ProtectedPage allowedRoles={['admin']}>
@@ -484,10 +530,10 @@ export default function AdminDashboardPage() {
                 <div>
                   <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Pizzas in Catalog</p>
                   <h3 className="text-2xl sm:text-3xl font-extrabold font-serif text-zinc-900 dark:text-zinc-100 mt-1">
-                    {loading ? <Skeleton className="h-8 w-12" /> : stats.totalMenuItems}
+                    {loading ? <Skeleton className="h-8 w-12" /> : catalogCount}
                   </h3>
                   <span className="text-[11px] text-amber-500 font-semibold mt-0.5 block">
-                    {stats.pendingMenuItems} Awaiting Review
+                    {pendingCount} Awaiting Review
                   </span>
                 </div>
                 <div className="w-12 h-12 rounded-2xl bg-pizza-orange/10 text-pizza-orange flex items-center justify-center shrink-0">

@@ -201,7 +201,7 @@ export default function VendorDashboardPage() {
     setBannerNotice(null);
 
     const isCurrentlyInactive = item.status === 'inactive';
-    const targetStatus: MenuItemStatus = isCurrentlyInactive ? 'approved' : 'inactive';
+    const targetStatus: MenuItemStatus = isCurrentlyInactive ? 'pending' : 'inactive';
 
     // Free Tier Guard Check: If activating and already at 3 active items
     if (isCurrentlyInactive && !isPremium && activeItemsCount >= 3) {
@@ -230,9 +230,9 @@ export default function VendorDashboardPage() {
       }
 
       setBannerNotice(
-        `Recipe "${item.itemName}" is now ${
-          targetStatus === 'inactive' ? 'hidden (inactive)' : 'active and live'
-        }.`
+        targetStatus === 'inactive'
+          ? `Recipe "${item.itemName}" is now hidden from customer menu.`
+          : `Recipe "${item.itemName}" submitted to Admin for moderation review & approval.`
       );
     } catch (err: any) {
       setBannerNotice(err.message || 'Failed to update recipe visibility.');
