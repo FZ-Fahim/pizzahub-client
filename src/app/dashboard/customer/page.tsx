@@ -21,6 +21,7 @@ import {
   TableHead,
   TableCell,
 } from '@/components/ui/table';
+import { OrderDetailsModal } from '@/components/orders/order-details-modal';
 import {
   Pizza,
   ShoppingBag,
@@ -116,6 +117,19 @@ export default function CustomerDashboardPage() {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
+
+  const handleOpenOrder = (ord: Order) => {
+    setSelectedOrder(ord);
+    setIsDetailsOpen(true);
+  };
+
+  const handleOrderCancelled = (updated: Order) => {
+    setOrders((prev) =>
+      prev.map((o) => (o._id === updated._id ? { ...o, status: 'cancelled' } : o))
+    );
+  };
 
   // Load customer orders from API + local fallback storage
   const fetchOrders = async (isManualRefresh = false) => {
@@ -563,12 +577,23 @@ export default function CustomerDashboardPage() {
 
                             {/* Action */}
                             <TableCell className="text-right">
-                              <Link
-                                href={itemObj ? `/menu/${itemObj._id}` : '/menu'}
-                                className="inline-flex items-center gap-1 text-xs font-semibold text-pizza-red hover:underline"
-                              >
-                                View Recipe <ChevronRight className="w-3.5 h-3.5" />
-                              </Link>
+                              <div className="flex items-center justify-end gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleOpenOrder(order)}
+                                  className="h-8 rounded-lg text-xs gap-1 border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                                >
+                                  <Eye className="w-3.5 h-3.5 text-pizza-red" />
+                                  <span>Timeline</span>
+                                </Button>
+                                <Link
+                                  href={itemObj ? `/menu/${itemObj._id}` : '/menu'}
+                                  className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-500 hover:text-pizza-red transition-colors p-1"
+                                >
+                                  <ChevronRight className="w-4 h-4" />
+                                </Link>
+                              </div>
                             </TableCell>
                           </TableRow>
                         );
@@ -639,12 +664,21 @@ export default function CustomerDashboardPage() {
                             </div>
                           </div>
 
-                          <div className="pt-2 flex justify-end">
+                          <div className="pt-2 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleOpenOrder(order)}
+                              className="h-8 px-2 text-xs font-semibold text-pizza-red hover:bg-pizza-red/10 flex items-center gap-1.5"
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Timeline & Status</span>
+                            </Button>
                             <Link
                               href={itemObj ? `/menu/${itemObj._id}` : '/menu'}
-                              className="text-xs font-semibold text-pizza-red flex items-center gap-1"
+                              className="text-xs font-semibold text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200 flex items-center gap-1"
                             >
-                              View Pizza Recipe <ArrowRight className="w-3.5 h-3.5" />
+                              Recipe <ChevronRight className="w-3 h-3" />
                             </Link>
                           </div>
                         </CardContent>
@@ -656,6 +690,14 @@ export default function CustomerDashboardPage() {
             )}
           </div>
         </div>
+
+        {/* Order Details & Timeline Modal */}
+        <OrderDetailsModal
+          order={selectedOrder}
+          isOpen={isDetailsOpen}
+          onClose={() => setIsDetailsOpen(false)}
+          onOrderCancelled={handleOrderCancelled}
+        />
       </div>
     </ProtectedPage>
   );
