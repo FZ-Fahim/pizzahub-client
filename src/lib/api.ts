@@ -162,6 +162,14 @@ export const subscriptionApi = {
     return res.data;
   },
 
+  verifySession: async (sessionId: string) => {
+    const res = await apiClient.post<ApiResponse<any>>(
+      '/subscription/verify-session',
+      { sessionId }
+    );
+    return res.data;
+  },
+
   getStatus: async () => {
     const res = await apiClient.get<ApiResponse<any>>('/subscription/status');
     return res.data;

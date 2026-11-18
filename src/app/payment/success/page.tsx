@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/auth-context';
+import { subscriptionApi } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -25,10 +26,20 @@ function PaymentSuccessContent() {
   const [activated, setActivated] = useState(false);
 
   useEffect(() => {
-    // Refresh user session from backend
-    refreshUser().catch(() => {});
-    setActivated(true);
-  }, [refreshUser]);
+    async function activateMembership() {
+      try {
+        if (sessionId) {
+          await subscriptionApi.verifySession(sessionId);
+        }
+      } catch (err) {
+        console.warn('[Payment Success] Session auto-activation notice:', err);
+      } finally {
+        await refreshUser().catch(() => {});
+        setActivated(true);
+      }
+    }
+    activateMembership();
+  }, [sessionId, refreshUser]);
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6">

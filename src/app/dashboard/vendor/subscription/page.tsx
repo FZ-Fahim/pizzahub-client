@@ -57,19 +57,15 @@ export default function VendorSubscriptionPage() {
         // Redirect to live Stripe Checkout
         window.location.href = response.url;
       } else {
-        // Fallback simulation for local offline testing
-        window.location.href = `/payment/success?session_id=demo_stripe_${Date.now()}`;
+        throw new Error('Stripe Checkout session URL was not returned by server.');
       }
     } catch (err: any) {
-      // In offline/demo mode, provide fallback redirect
-      if (err.message?.includes('Stripe') || err.message?.includes('Network')) {
-        window.location.href = `/payment/success?session_id=demo_stripe_${Date.now()}`;
-      } else {
-        setErrorMessage(
-          err.message || 'Failed to initiate Stripe Checkout session. Please check your network and retry.'
-        );
-        setLoading(false);
-      }
+      const msg =
+        err.response?.data?.message ||
+        err.message ||
+        'Failed to initiate Stripe Checkout session. Please verify backend is running.';
+      setErrorMessage(msg);
+      setLoading(false);
     }
   };
 
