@@ -16,6 +16,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com', // Google OAuth user avatars
       },
+      {
+        protocol: 'https',
+        hostname: 'www.thecookierookie.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
     ],
   },
 };
