@@ -689,6 +689,17 @@ export default function VendorDashboardPage() {
                       {/* Action buttons */}
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          <Link href={`/dashboard/vendor/menu/${item._id}/edit`}>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="h-8 w-8 p-0 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
+                              title="Edit Recipe"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </Button>
+                          </Link>
+
                           <Link href={`/menu/${item._id}`}>
                             <Button
                               size="sm"
