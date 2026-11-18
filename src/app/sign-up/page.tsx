@@ -12,7 +12,7 @@ import { Check, Circle, Pizza, Store, User as UserIcon, Loader2 } from 'lucide-r
 
 export default function SignUpPage() {
   const router = useRouter();
-  const { register, loginWithGoogle } = useAuth();
+  const { register } = useAuth();
 
   const [role, setRole] = useState<UserRole>('customer');
   const [name, setName] = useState('');
@@ -79,13 +79,12 @@ export default function SignUpPage() {
     }
   };
 
-  const handleGoogleSignUp = async () => {
-    try {
-      setError(null);
-      await loginWithGoogle();
-    } catch (err: any) {
-      setError(err.message || 'Failed to initiate Google sign-in.');
-    }
+  const handleGoogleSignUp = () => {
+    const serverUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "https://pizzahub-server-one.vercel.app";
+    const callbackUrl = encodeURIComponent(`${window.location.origin}`);
+    
+    // Direct top-level navigation ensures cookies are stored as 1st-party cookies
+    window.location.href = `${serverUrl}/api/auth/sign-in/social?provider=google&callbackURL=${callbackUrl}`;
   };
 
   return (

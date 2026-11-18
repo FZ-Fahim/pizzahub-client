@@ -11,7 +11,7 @@ import { Pizza, Eye, EyeOff, Loader2, Sparkles } from 'lucide-react';
 
 export default function SignInPage() {
   const router = useRouter();
-  const { login, loginWithGoogle } = useAuth();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -48,13 +48,12 @@ export default function SignInPage() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      setError(null);
-      await loginWithGoogle();
-    } catch (err: any) {
-      setError(err.message || 'Failed to initiate Google sign-in.');
-    }
+  const handleGoogleSignIn = () => {
+    const serverUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "https://pizzahub-server-one.vercel.app";
+    const callbackUrl = encodeURIComponent(`${window.location.origin}`);
+    
+    // Direct top-level navigation ensures cookies are stored as 1st-party cookies
+    window.location.href = `${serverUrl}/api/auth/sign-in/social?provider=google&callbackURL=${callbackUrl}`;
   };
 
   const fillDemoAccount = (demoEmail: string, demoPass: string) => {

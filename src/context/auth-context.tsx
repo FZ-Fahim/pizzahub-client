@@ -117,11 +117,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const loginWithGoogle = async (): Promise<void> => {
-    const callbackURL = typeof window !== 'undefined' ? window.location.origin : '/';
-    await signIn.social({
-      provider: 'google',
-      callbackURL,
-    });
+    const serverUrl = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'https://pizzahub-server-one.vercel.app';
+    const callbackUrl = encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : ''}`);
+    window.location.href = `${serverUrl}/api/auth/sign-in/social?provider=google&callbackURL=${callbackUrl}`;
   };
 
   const register = async (
